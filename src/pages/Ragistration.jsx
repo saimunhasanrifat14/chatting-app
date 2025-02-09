@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import Banner from "../assets/ragistration/banner.png";
 import { registrationInputData } from "../Library/Registration";
 const Ragistration = () => {
+
+    const [email , setEmail] = useState("")
+    const [fullname , setFullName] = useState("")
+    const [password , setPassword] = useState("")
   const item = registrationInputData();
+
+  /**
+   * todo : handleInput function implement
+   * @param ({event})
+   * return : null
+   */
+
+  const handleInput = (event)=>{
+    const {name, value} = event.target;
+    console.log(value);
+    
+  }
+
+  console.log(email);
+  
   return (
     <div>
       <div className="flex">
@@ -20,14 +39,15 @@ const Ragistration = () => {
                     className="py-2 px-3 border border-gray-400 rounded"
                     type={
                       item.name.toLocaleLowerCase() == "email"
-                        ? "Email"
-                        : item.name.toLocaleLowerCase() == "fullname"
+                        ? "Email".toLocaleLowerCase()
+                        : item.name == "fullname"
                         ? "text"
                         : "password"
                     }
                     name={item.name}
                     id={item.id}
                     placeholder={`Enter your ${item.name}`}
+                    onChange={handleInput}
                   />
                 </div>
               ))}
