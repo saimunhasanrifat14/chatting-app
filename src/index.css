@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root{
+  --blue_color : #5F35F5;
+  --whate_color : #ffff;
+  --auth_heading : #11175D;
+  --black_color : #000000;
+}
+
+@theme {
+  --color-blueColor: var(--blue_color);
+  --color-whateColor: var(--whate_color);
+  --color-blackColor: var(--auth_heading);
+  --color-blackColor: var(--black_color);
+}
