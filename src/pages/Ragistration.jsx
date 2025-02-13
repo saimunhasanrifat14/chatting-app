@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Banner from "../assets/ragistration/banner.png";
 import { registrationInputData } from "../Library/Registration";
 import { FaEye } from "react-icons/fa";
+import RegistrationBtn from "./CommonComponent/RegistrationBtn";
 const Ragistration = () => {
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
@@ -33,7 +34,7 @@ const Ragistration = () => {
 
   const handleEye = () => {
     seteye(!eye);
-  }
+  };
 
   return (
     <div>
@@ -41,11 +42,15 @@ const Ragistration = () => {
         <div className="w-[65%]">
           <div className="flex items-center justify-center h-full">
             <div>
-              <h1 className="text-[34px] font-bold text-authHeading mb-[13px]">Get started with easily register</h1>
-              <p className="text-[20px] text-[#0000006b] mb-[50px]">Free register and you can enjoy it</p>
+              <h1 className="text-[34px] font-bold text-authHeading mb-[13px]">
+                Get started with easily register
+              </h1>
+              <p className="text-[20px] text-[#0000006b] mb-[50px]">
+                Free register and you can enjoy it
+              </p>
               {item?.map((item) =>
                 item.name == "password" ? (
-                  <div className="flex flex-col relative">
+                  <div className="flex flex-col relative mb-[50px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
@@ -65,7 +70,7 @@ const Ragistration = () => {
                     </span>
                   </div>
                 ) : (
-                  <div className="flex flex-col mb-[30px]">
+                  <div className="flex flex-col mb-[20px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
@@ -86,6 +91,15 @@ const Ragistration = () => {
                   </div>
                 )
               )}
+              <RegistrationBtn btnContent={"Sign up"} />
+              <div className="flex justify-center mt-[30px]">
+                <span className="text-center text-[13px]">
+                  Already have an account ?{" "}
+                  <a className="text-[#EA6C00] font-bold" href="">
+                    Sign In
+                  </a>
+                </span>
+              </div>
             </div>
           </div>
         </div>
