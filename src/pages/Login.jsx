@@ -2,6 +2,7 @@ import React from "react";
 import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
+import LoginBtn from "./CommonComponent/LoginBtn";
 
 const Login = () => {
   const item = LoginInputData();
@@ -13,7 +14,10 @@ const Login = () => {
             <h1 className="text-[34px] font-bold text-authHeading mb-[25px]">
               Login to your account!
             </h1>
-            <a className="flex items-center justify-center gap-2 text-[14px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]" href="#">
+            <a
+              className="flex items-center justify-center gap-2 text-[14px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]"
+              href="#"
+            >
               <span className="text-[20px]">
                 <FcGoogle />
               </span>
@@ -37,6 +41,15 @@ const Login = () => {
                 />
               </div>
             ))}
+            <LoginBtn btnContent="Login to Continue" />
+            <div className="flex justify-center mt-[30px]">
+              <span className="text-center text-[13px]">
+                Don’t have an account ?{" "}
+                <a className="text-[#EA6C00] font-bold" href="">
+                  Sign up
+                </a>
+              </span>
+            </div>
           </div>
         </div>
       </div>
