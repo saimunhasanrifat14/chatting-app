@@ -3,6 +3,8 @@ import Banner from "../assets/ragistration/banner.png";
 import { registrationInputData } from "../Library/Registration";
 import { FaEye } from "react-icons/fa";
 import RegistrationBtn from "./CommonComponent/RegistrationBtn";
+import Login from "./Login";
+import { Link } from "react-router-dom";
 const Ragistration = () => {
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
@@ -93,12 +95,12 @@ const Ragistration = () => {
               )}
               <RegistrationBtn btnContent={"Sign up"} />
               <div className="flex justify-center mt-[30px]">
-                <span className="text-center text-[13px]">
+                <p className="text-center text-[13px]">
                   Already have an account ?{" "}
-                  <a className="text-[#EA6C00] font-bold" href="">
-                    Sign In
-                  </a>
-                </span>
+                  <span className="text-[#EA6C00] font-bold">
+                    <Link to="/login">Sign In</Link>
+                  </span>
+                </p>
               </div>
             </div>
           </div>

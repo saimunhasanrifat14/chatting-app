@@ -3,6 +3,7 @@ import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
 import LoginBtn from "./CommonComponent/LoginBtn";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const item = LoginInputData();
@@ -43,12 +44,12 @@ const Login = () => {
             ))}
             <LoginBtn btnContent="Login to Continue" />
             <div className="flex justify-center mt-[30px]">
-              <span className="text-center text-[13px]">
+              <p className="text-center text-[13px]">
                 Don’t have an account ?{" "}
-                <a className="text-[#EA6C00] font-bold" href="">
-                  Sign up
-                </a>
-              </span>
+                <span className="text-[#EA6C00] font-bold">
+                  <Link to="/Ragistration">Sign up</Link>
+                </span>
+              </p>
             </div>
           </div>
         </div>
