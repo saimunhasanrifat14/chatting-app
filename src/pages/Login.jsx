@@ -1,0 +1,50 @@
+import React from "react";
+import loginBanner from "../assets/login/LoginBanner.jpg";
+import { FcGoogle } from "react-icons/fc";
+import { LoginInputData } from "../Library/Login";
+
+const Login = () => {
+  const item = LoginInputData();
+  return (
+    <div className="flex">
+      <div className="w-[65%]">
+        <div className="flex items-center justify-center h-full">
+          <div>
+            <h1 className="text-[34px] font-bold text-authHeading mb-[25px]">
+              Login to your account!
+            </h1>
+            <a className="flex items-center justify-center gap-2 text-[14px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]" href="#">
+              <span className="text-[20px]">
+                <FcGoogle />
+              </span>
+              Login with Google
+            </a>
+            {item?.map((item) => (
+              <div className="flex flex-col mb-[40px] w-[400px]">
+                <label className="text-[#03014c6f] text-[13px]" htmlFor="">
+                  {item.name == "email" ? "Email Address" : "Password"}
+                </label>
+                <input
+                  className="py-3 border-b-gray-300 border-b-[2px] border-b-solid outline-none placeholder:text-[#000000a9] "
+                  type={item.name == "email" ? "email" : "password"}
+                  id={item.id}
+                  name={item.name}
+                  placeholder={
+                    item.name == "email"
+                      ? "Enter Your Email"
+                      : "Enter Your Password"
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="w-[35%] flex justify-end">
+        <img src={loginBanner} alt={loginBanner} />
+      </div>
+    </div>
+  );
+};
+
+export default Login;
