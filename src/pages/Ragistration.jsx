@@ -38,19 +38,19 @@ const Ragistration = () => {
   return (
     <div>
       <div className="flex">
-        <div className="w-[60%]">
+        <div className="w-[65%]">
           <div className="flex items-center justify-center h-full">
             <div>
-              <h1>Get started with easily register</h1>
-              <p className="mb-3">Free register and you can enjoy it</p>
+              <h1 className="text-[34px] font-bold text-authHeading mb-[13px]">Get started with easily register</h1>
+              <p className="text-[20px] text-[#0000006b] mb-[50px]">Free register and you can enjoy it</p>
               {item?.map((item) =>
                 item.name == "password" ? (
                   <div className="flex flex-col relative">
-                    <label htmlFor="#">
+                    <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
                     <input
-                      className="py-2 px-3 border border-gray-400 rounded"
+                      className="py-2 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
                       type={eye ? "text" : "password"}
                       name={item.name}
                       id={item.id}
@@ -58,19 +58,19 @@ const Ragistration = () => {
                       onChange={handleInput}
                     />
                     <span
-                      className="absolute right-[10px] top-[36px] cursor-pointer"
+                      className="absolute right-[13px] top-[48px] cursor-pointer"
                       onClick={handleEye}
                     >
                       <FaEye />
                     </span>
                   </div>
                 ) : (
-                  <div className="flex flex-col">
-                    <label htmlFor="#">
+                  <div className="flex flex-col mb-[30px]">
+                    <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
                     <input
-                      className="py-2 px-3 border border-gray-400 rounded"
+                      className="py-2 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
                       type={
                         item.name.toLocaleLowerCase() == "email"
                           ? "Email".toLocaleLowerCase()
@@ -89,8 +89,8 @@ const Ragistration = () => {
             </div>
           </div>
         </div>
-        <div className="w-[40%]">
-          <img src={Banner} alt={Banner} />
+        <div className="w-[35%] flex justify-end">
+          <img className="w-[530px]" src={Banner} alt={Banner} />
         </div>
       </div>
     </div>

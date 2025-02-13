@@ -10,6 +10,6 @@
 @theme {
   --color-blueColor: var(--blue_color);
   --color-whateColor: var(--whate_color);
-  --color-blackColor: var(--auth_heading);
+  --color-authHeading: var(--auth_heading);
   --color-blackColor: var(--black_color);
 }
