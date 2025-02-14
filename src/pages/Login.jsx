@@ -43,7 +43,7 @@ const Login = () => {
               Login with Google
             </a>
             {item?.map((item) => (
-              <div className="flex flex-col mb-[40px] w-[400px]">
+              <div key={item.id} className="flex flex-col mb-[40px] w-[400px]">
                 <label className="text-[#03014c6f] text-[13px]" htmlFor="">
                   {item.name == "email" ? "Email Address" : "Password"}
                 </label>

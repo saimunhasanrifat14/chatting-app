@@ -52,7 +52,7 @@ const Ragistration = () => {
               </p>
               {item?.map((item) =>
                 item.name == "password" ? (
-                  <div className="flex flex-col relative mb-[50px] w-[400px]">
+                  <div key={item.id} className="flex flex-col relative mb-[50px] w-[400px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
@@ -72,7 +72,7 @@ const Ragistration = () => {
                     </span>
                   </div>
                 ) : (
-                  <div className="flex flex-col mb-[20px] w-[400px]">
+                  <div key={item.id} className="flex flex-col mb-[20px] w-[400px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
