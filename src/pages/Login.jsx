@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
@@ -6,7 +6,25 @@ import LoginBtn from "./CommonComponent/LoginBtn";
 import { Link } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const item = LoginInputData();
+
+  /**
+   * todo : handleInput function implement
+   * @param ({event})
+   * return : null
+   */
+
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    if (name == "email") {
+      setEmail(value);
+    }else{
+      setPassword(value);
+    }
+  };
+
   return (
     <div className="flex">
       <div className="w-[65%]">
@@ -39,6 +57,7 @@ const Login = () => {
                       ? "Enter Your Email"
                       : "Enter Your Password"
                   }
+                  onChange={handleInput}
                 />
               </div>
             ))}
