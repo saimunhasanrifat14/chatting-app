@@ -52,12 +52,12 @@ const Ragistration = () => {
               </p>
               {item?.map((item) =>
                 item.name == "password" ? (
-                  <div className="flex flex-col relative mb-[50px]">
+                  <div className="flex flex-col relative mb-[50px] w-[400px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
                     <input
-                      className="py-2 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
+                      className="py-3 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
                       type={eye ? "text" : "password"}
                       name={item.name}
                       id={item.id}
@@ -65,19 +65,19 @@ const Ragistration = () => {
                       onChange={handleInput}
                     />
                     <span
-                      className="absolute right-[13px] top-[48px] cursor-pointer"
+                      className="absolute right-[13px] top-[52px] cursor-pointer"
                       onClick={handleEye}
                     >
                       <FaEye />
                     </span>
                   </div>
                 ) : (
-                  <div className="flex flex-col mb-[20px]">
+                  <div className="flex flex-col mb-[20px] w-[400px]">
                     <label className="mb-[10px]" htmlFor="#">
                       Your {item.name} <span className="text-red-400">*</span>
                     </label>
                     <input
-                      className="py-2 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
+                      className="py-3 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
                       type={
                         item.name.toLocaleLowerCase() == "email"
                           ? "Email".toLocaleLowerCase()
@@ -93,8 +93,8 @@ const Ragistration = () => {
                   </div>
                 )
               )}
-              <RegistrationBtn btnContent={"Sign up"} />
-              <div className="flex justify-center mt-[30px]">
+              <div className="flex flex-col justify-center gap-[30px] w-[400px]">
+                <RegistrationBtn btnContent={"Sign up"} />
                 <p className="text-center text-[13px]">
                   Already have an account ?{" "}
                   <span className="text-[#EA6C00] font-bold">
