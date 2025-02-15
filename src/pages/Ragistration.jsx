@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Banner from "../assets/ragistration/banner.png";
 import { registrationInputData } from "../Library/Registration";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import RegistrationBtn from "./CommonComponent/RegistrationBtn";
 import Login from "./Login";
 import { Link } from "react-router-dom";
@@ -47,7 +47,9 @@ const Ragistration = () => {
       setFullNameError("Fullname Missing");
     } else if (!password) {
       setPasswordError("password Missing");
-    }else{alert("done")}
+    } else {
+      alert("done");
+    }
   };
 
   /**
@@ -71,70 +73,57 @@ const Ragistration = () => {
               <p className="text-[20px] text-[#0000006b] mb-[50px]">
                 Free register and you can enjoy it
               </p>
-              {item?.map((item) =>
-                item.name == "password" ? (
-                  <div
-                    key={item.id}
-                    className="flex flex-col relative mb-[50px] w-[400px]"
-                  >
-                    <label className="mb-[10px]" htmlFor="#">
-                      Your {item.name} <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      className="py-3 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
-                      type={eye ? "text" : "password"}
-                      name={item.name}
-                      id={item.id}
-                      placeholder={`Enter your ${item.name}`}
-                      onChange={handleInput}
-                    />
-                    {item.name == "password" && password == "" ? (
-                      <span className="text-red-600">{passwordError}</span>
-                    ) : (
-                      ""
-                    )}
+              {item?.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col mb-[20px] w-[400px] relative"
+                >
+                  <label className="mb-[10px]" htmlFor="#">
+                    Your {item.name} <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    className="py-3 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
+                    type={
+                      item.name.toLocaleLowerCase() == "email"
+                        ? "Email".toLocaleLowerCase()
+                        : item.name == "fullname"
+                        ? "text"
+                        : eye
+                        ? "text"
+                        : "password"
+                    }
+                    name={item.name}
+                    id={item.id}
+                    placeholder={`Enter your ${item.name}`}
+                    onChange={handleInput}
+                  />
+                  {item.name === "password" && password !== "" ? (
                     <span
-                      className="absolute right-[13px] top-[52px] cursor-pointer"
+                      className="absolute right-[15px] top-[50px] cursor-pointer text-[#00000089] text-xl"
                       onClick={handleEye}
                     >
-                      <FaEye />
+                      {eye == true ? <FaEye /> : <FaEyeSlash />}
                     </span>
-                  </div>
-                ) : (
-                  <div
-                    key={item.id}
-                    className="flex flex-col mb-[20px] w-[400px]"
-                  >
-                    <label className="mb-[10px]" htmlFor="#">
-                      Your {item.name} <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      className="py-3 px-3 border-gray-300 border-[2px] border-solid rounded outline-none"
-                      type={
-                        item.name.toLocaleLowerCase() == "email"
-                          ? "Email".toLocaleLowerCase()
-                          : item.name == "fullname"
-                          ? "text"
-                          : "password"
-                      }
-                      name={item.name}
-                      id={item.id}
-                      placeholder={`Enter your ${item.name}`}
-                      onChange={handleInput}
-                    />
-                    {item.name == "email" && email == "" ? (
-                      <span className="text-red-600">{emailError}</span>
-                    ) : (
-                      ""
-                    )}
-                    {item.name == "fullname" && fullname == "" ? (
-                      <span className="text-red-600">{fullnameError}</span>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                )
-              )}
+                  ) : (
+                    ""
+                  )}
+                  {item.name == "email" && email == "" ? (
+                    <span className="text-red-600">{emailError}</span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name == "fullname" && fullname == "" ? (
+                    <span className="text-red-600">{fullnameError}</span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name == "password" && password == "" ? (
+                    <span className="text-red-600">{passwordError}</span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ))}
               <div className="flex flex-col justify-center gap-[30px] w-[400px]">
                 <RegistrationBtn
                   btnContent={"Sign up"}
