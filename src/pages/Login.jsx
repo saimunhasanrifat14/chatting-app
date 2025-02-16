@@ -9,9 +9,26 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const item = LoginInputData();
   const [eye, seteye] = useState(false);
 
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  /**
+   * todo : handerror function implement'
+   * @param ({event})
+   * return : null
+   */
+
+  const handleError = () => {
+    email === ""
+      ? setEmailError("Email missing")
+      : password === ""
+      ? setPasswordError("Password missing")
+      : "";
+  };
   /**
    * todo : handleInput function implement
    * @param ({event})
@@ -54,13 +71,18 @@ const Login = () => {
               Login with Google
             </a>
             {item?.map((item) => (
-              <div key={item.id} className="flex flex-col mb-[40px] w-[400px] relative">
+              <div
+                key={item.id}
+                className="flex flex-col mb-[40px] w-[400px] relative"
+              >
                 <label className="text-[#03014c6f] text-[13px]" htmlFor="">
                   {item.name == "email" ? "Email Address" : "Password"}
                 </label>
                 <input
                   className="py-3 border-b-gray-300 border-b-[2px] border-b-solid outline-none placeholder:text-[#000000a9] "
-                  type={item.name == "email" ? "email" : eye ? "text" : "password"}
+                  type={
+                    item.name == "email" ? "email" : eye ? "text" : "password"
+                  }
                   id={item.id}
                   name={item.name}
                   placeholder={
@@ -70,6 +92,16 @@ const Login = () => {
                   }
                   onChange={handleInput}
                 />
+                {item.name === "email" && email === "" ? (
+                  <span className="text-red-600">{emailError}</span>
+                ) : (
+                  ""
+                )}
+                {item.name === "password" && password === "" ? (
+                  <span className="text-red-600">{passwordError}</span>
+                ) : (
+                  ""
+                )}
                 {item.name === "password" && password !== "" ? (
                   <span
                     className="absolute right-[15px] top-[34px] cursor-pointer text-[#00000089] text-xl"
@@ -82,7 +114,7 @@ const Login = () => {
                 )}
               </div>
             ))}
-            <LoginBtn btnContent="Login to Continue" />
+            <LoginBtn btnContent="Login to Continue" onClick={handleError} />
             <div className="flex justify-center mt-[30px]">
               <p className="text-center text-[13px]">
                 Don’t have an account ?{" "}
