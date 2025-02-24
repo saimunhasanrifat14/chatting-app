@@ -5,7 +5,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import RegistrationBtn from "./CommonComponent/RegistrationBtn";
 import Login from "./Login";
 import { Link } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
 const Ragistration = () => {
+  const auth = getAuth();
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +51,12 @@ const Ragistration = () => {
     } else if (!password) {
       setPasswordError("password Missing");
     } else {
-      alert("done");
+      createUserWithEmailAndPassword(auth , email , password).then((userinfo)=>{
+        console.log("user crated success " , userinfo);
+      }).catch((err)=>{
+        console.log("error is", err);
+        
+      })
     }
   };
 
