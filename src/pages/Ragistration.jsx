@@ -5,13 +5,22 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import RegistrationBtn from "./CommonComponent/RegistrationBtn";
 import Login from "./Login";
 import { Link } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { toast, Bounce } from "react-toastify";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
+import { PuffLoader, PulseLoader } from "react-spinners";
+
 
 const Ragistration = () => {
   const auth = getAuth();
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setloading] = useState(false);
   const [eye, seteye] = useState(false);
   const item = registrationInputData();
 
@@ -51,14 +60,46 @@ const Ragistration = () => {
     } else if (!password) {
       setPasswordError("password Missing");
     } else {
-      createUserWithEmailAndPassword(auth , email , password).then((userinfo)=>{
-        console.log("user crated success " , userinfo);
-      }).catch((err)=>{
-        console.log("error is", err);
-        
-      })
-    }
-  };
+      setloading(true);
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userinfo) => {
+          updateProfile(auth.currentUser, {
+            displayName: fullname || "unknon user",
+          });
+          console.log("user crated success ", userinfo);
+        })
+        .then(() => {
+          toast.success(`${fullname} Registration Sucessfull`, {
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+          return sendEmailVerification(auth.currentUser);
+        })
+        .then((mailInfo) => {
+          console.log("mail send ", mailInfo);
+        })
+        .catch((err) => {
+          console.log("error is", err.code);
+        })
+        .finally(() => {
+          setloading(false);
+          setEmail("");
+          setFullName("");
+          setPassword("");
+          setEmailError("");
+          setFullNameError("");
+          setPasswordError("");
+        });
+      }
+    };
+    console.log(auth.currentUser);
 
   /**
    * todo : handleEye function implement
@@ -69,6 +110,8 @@ const Ragistration = () => {
     seteye(!eye);
   };
 
+
+  
   return (
     <div>
       <div className="flex">
@@ -101,6 +144,13 @@ const Ragistration = () => {
                         : "password"
                     }
                     name={item.name}
+                    value={
+                      item.name === "email"
+                        ? email
+                        : item.name === "fullname"
+                        ? fullname
+                        : password
+                    }
                     id={item.id}
                     placeholder={`Enter your ${item.name}`}
                     onChange={handleInput}
@@ -133,10 +183,15 @@ const Ragistration = () => {
                 </div>
               ))}
               <div className="flex flex-col justify-center gap-[30px] w-[400px]">
-                <RegistrationBtn
-                  btnContent={"Sign up"}
-                  onClick={handleSignUp}
-                />
+                {loading ? (
+                  <RegistrationBtn loading={loading}/>
+                ) : (
+                  <RegistrationBtn
+                    btnContent={"Sign up"}
+                    onClick={handleSignUp}
+                  />
+                )}
+
                 <p className="text-center text-[13px]">
                   Already have an account ?{" "}
                   <span className="text-[#EA6C00] font-bold">
