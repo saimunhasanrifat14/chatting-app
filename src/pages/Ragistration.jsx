@@ -12,8 +12,6 @@ import {
   updateProfile,
   sendEmailVerification,
 } from "firebase/auth";
-import { PuffLoader, PulseLoader } from "react-spinners";
-
 
 const Ragistration = () => {
   const auth = getAuth();
@@ -35,6 +33,8 @@ const Ragistration = () => {
    */
 
   const handleInput = (event) => {
+    console.log(event);
+
     const { name, value } = event.target;
     if (name === "email") {
       setEmail(value);
@@ -83,7 +83,7 @@ const Ragistration = () => {
           return sendEmailVerification(auth.currentUser);
         })
         .then((mailInfo) => {
-          console.log("mail send ", mailInfo);
+          console.log("mail sended ", mailInfo);
         })
         .catch((err) => {
           console.log("error is", err.code);
@@ -97,9 +97,9 @@ const Ragistration = () => {
           setFullNameError("");
           setPasswordError("");
         });
-      }
-    };
-    console.log(auth.currentUser);
+    }
+  };
+  console.log(auth.currentUser);
 
   /**
    * todo : handleEye function implement
@@ -110,8 +110,6 @@ const Ragistration = () => {
     seteye(!eye);
   };
 
-
-  
   return (
     <div>
       <div className="flex">
@@ -184,7 +182,7 @@ const Ragistration = () => {
               ))}
               <div className="flex flex-col justify-center gap-[30px] w-[400px]">
                 {loading ? (
-                  <RegistrationBtn loading={loading}/>
+                  <RegistrationBtn loading={loading} />
                 ) : (
                   <RegistrationBtn
                     btnContent={"Sign up"}
