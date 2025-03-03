@@ -5,42 +5,96 @@ import { LoginInputData } from "../Library/Login";
 import LoginBtn from "./CommonComponent/LoginBtn";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const auth = getAuth();
 
+  const [logininfo, setlogininfo] = useState({
+    email: "",
+    password: "",
+  });
+  const [logininfoerror, setlogininfoerror] = useState({
+    emailError: "",
+    passwordError: "",
+  });
+
+  const [loading, setloading] = useState(false);
   const item = LoginInputData();
   const [eye, seteye] = useState(false);
 
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  /**
+   * todo : handleInput function implement
+   * @param ({event})
+   * return : null
+   */
+  const handleInput = (event) => {
+    const { name, value } = event.target;
+    setlogininfo({
+      ...logininfo,
+      [name]: value,
+    });
+  };
 
   /**
    * todo : handerror function implement'
    * @param ({event})
    * return : null
    */
-
   const handleError = () => {
-    email === ""
-      ? setEmailError("Email missing")
-      : password === ""
-      ? setPasswordError("Password missing")
-      : "";
-  };
-  /**
-   * todo : handleInput function implement
-   * @param ({event})
-   * return : null
-   */
-
-  const handleInput = (event) => {
-    const { name, value } = event.target;
-    if (name == "email") {
-      setEmail(value);
+    const { email, password } = logininfo;
+    if (!email) {
+      setlogininfoerror({
+        ...logininfoerror,
+        emailError: "Email Missing",
+      });
+    } else if (!password) {
+      setlogininfoerror({
+        ...logininfoerror,
+        passwordError: "Password Missing",
+      });
     } else {
-      setPassword(value);
+      setloading(true);
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userInfo) => {
+          console.log(userInfo);
+          logininfo.email = "";
+          logininfo.password = "";
+          logininfoerror.emailError = "";
+          logininfoerror.passwordError = "";
+        })
+        .catch((err) => {
+          console.log(err.code);
+          if (err.code === "auth/wrong-password") {
+            setlogininfoerror({
+              ...logininfoerror,
+              passwordError : "Incorrect password."
+            })
+          } else if (err.code === "auth/user-not-found") {
+            setlogininfoerror({
+              ...logininfoerror,
+              emailError : "No account found with this email."
+            })
+          } else if (err.code === "auth/invalid-email") {
+            setlogininfoerror({
+              ...logininfoerror,
+              emailError : "Invalid email format."
+            })
+          } else {
+            setlogininfoerror({
+              ...logininfoerror,
+              emailError : "Something went wrong. Please try again."
+            })
+          }
+        })
+        .finally(() => {
+          setloading(false);
+        });
     }
   };
 
@@ -48,11 +102,18 @@ const Login = () => {
    * todo : handleEye function implement
    * @param ()
    */
-
   const handleEye = () => {
     seteye(!eye);
   };
 
+  const loginwithGoogle = ()=>{    
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).then((userinfo)=>{
+      console.log(userinfo);
+    }).catch((err)=>{
+      console.log(err.code);
+    })
+  }
   return (
     <div className="flex">
       <div className="w-[65%]">
@@ -63,58 +124,90 @@ const Login = () => {
             </h1>
             <a
               className="flex items-center justify-center gap-2 text-[14px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]"
-              href="#"
+              href="#"  onClick={loginwithGoogle}
             >
               <span className="text-[20px]">
                 <FcGoogle />
               </span>
               Login with Google
             </a>
-            {item?.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col mb-[40px] w-[400px] relative"
-              >
-                <label className="text-[#03014c6f] text-[13px]" htmlFor="">
-                  {item.name == "email" ? "Email Address" : "Password"}
-                </label>
-                <input
-                  className="py-3 border-b-gray-300 border-b-[2px] border-b-solid outline-none placeholder:text-[#000000a9] "
-                  type={
-                    item.name == "email" ? "email" : eye ? "text" : "password"
-                  }
-                  id={item.id}
-                  name={item.name}
-                  placeholder={
-                    item.name == "email"
-                      ? "Enter Your Email"
-                      : "Enter Your Password"
-                  }
-                  onChange={handleInput}
+            <form onSubmit={(e) => e.preventDefault()}>
+              {item?.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col mb-[40px] w-[400px] relative"
+                >
+                  <label className="text-[#03014c6f] text-[13px]" htmlFor="">
+                    {item.name == "email" ? "Email Address" : "Password"}
+                  </label>
+                  <input
+                    className="py-3 border-b-gray-300 border-b-[2px] border-b-solid outline-none placeholder:text-[#000000a9] "
+                    type={
+                      item.name == "email" ? "email" : eye ? "text" : "password"
+                    }
+                    id={item.id}
+                    name={item.name}
+                    value={
+                      item.name == "email"
+                        ? logininfo.email
+                        : logininfo.password
+                    }
+                    placeholder={
+                      item.name == "email"
+                        ? "Enter Your Email"
+                        : "Enter Your Password"
+                    }
+                    onChange={handleInput}
+                  />
+                  {item.name === "email" && logininfo.email === "" ? (
+                    <span className="text-red-600">
+                      {logininfoerror.emailError}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "password" && logininfo.password === "" ? (
+                    <span className="text-red-600">
+                      {logininfoerror.passwordError}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "email" && logininfoerror.emailError !== "" ? (
+                    <span className="text-red-600">
+                      {logininfoerror.Error}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "password" && logininfoerror.passwordError !== "" ? (
+                    <span className="text-red-600">
+                      {logininfoerror.Error}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "password" && logininfo.password !== "" ? (
+                    <span
+                      className="absolute right-[15px] top-[34px] cursor-pointer text-[#00000089] text-xl"
+                      onClick={handleEye}
+                    >
+                      {eye == true ? <FaEye /> : <FaEyeSlash />}
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ))}
+              {loading ? (
+                <LoginBtn loading={loading} />
+              ) : (
+                <LoginBtn
+                  btnContent="Login to Continue"
+                  onClick={handleError}
                 />
-                {item.name === "email" && email === "" ? (
-                  <span className="text-red-600">{emailError}</span>
-                ) : (
-                  ""
-                )}
-                {item.name === "password" && password === "" ? (
-                  <span className="text-red-600">{passwordError}</span>
-                ) : (
-                  ""
-                )}
-                {item.name === "password" && password !== "" ? (
-                  <span
-                    className="absolute right-[15px] top-[34px] cursor-pointer text-[#00000089] text-xl"
-                    onClick={handleEye}
-                  >
-                    {eye == true ? <FaEye /> : <FaEyeSlash />}
-                  </span>
-                ) : (
-                  ""
-                )}
-              </div>
-            ))}
-            <LoginBtn btnContent="Login to Continue" onClick={handleError} />
+              )}
+            </form>
             <div className="flex justify-center mt-[30px]">
               <p className="text-center text-[13px]">
                 Don’t have an account ?{" "}

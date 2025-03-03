@@ -26,6 +26,8 @@ const Ragistration = () => {
   const [emailError, setEmailError] = useState("");
   const [fullnameError, setFullNameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  // const [Error, setError] = useState("");
   /**
    * todo : handleInput function implement
    * @param ({event})
@@ -38,10 +40,12 @@ const Ragistration = () => {
     const { name, value } = event.target;
     if (name === "email") {
       setEmail(value);
+      setEmailError("")
     } else if (name == "fullname") {
       setFullName(value);
     } else {
       setPassword(value);
+      setPasswordError("")
     }
   };
 
@@ -66,7 +70,7 @@ const Ragistration = () => {
           updateProfile(auth.currentUser, {
             displayName: fullname || "unknon user",
           });
-          console.log("user crated success ", userinfo);
+          console.log("user created successfully ", userinfo);
         })
         .then(() => {
           toast.success(`${fullname} Registration Sucessfull`, {
@@ -84,18 +88,27 @@ const Ragistration = () => {
         })
         .then((mailInfo) => {
           console.log("mail sended ", mailInfo);
-        })
-        .catch((err) => {
-          console.log("error is", err.code);
-        })
-        .finally(() => {
-          setloading(false);
           setEmail("");
           setFullName("");
           setPassword("");
           setEmailError("");
           setFullNameError("");
           setPasswordError("");
+        })
+        .catch((err) => {
+          console.log("error is", err.code);
+          if (err.code === "auth/email-already-in-use") {
+            setEmailError("This email is already registered.");
+          } else if (err.code === "auth/weak-password") {
+            setPasswordError("Password should be at least 6 characters long.");
+          } else if (err.code === "auth/invalid-email") {
+            setEmailError("Please enter a valid email.");
+          } else {
+            setEmailError("Something went wrong. Please try again.");
+          }
+        })
+        .finally(() => {
+          setloading(false);
         });
     }
   };
@@ -163,18 +176,28 @@ const Ragistration = () => {
                   ) : (
                     ""
                   )}
-                  {item.name == "email" && email == "" ? (
-                    <span className="text-red-600">{emailError}</span>
+                  {item.name === "email" && email === "" ? (
+                    <span className="text-red-600 text-[12px]">{emailError}</span>
                   ) : (
                     ""
                   )}
-                  {item.name == "fullname" && fullname == "" ? (
-                    <span className="text-red-600">{fullnameError}</span>
+                  {item.name === "fullname" && fullname === "" ? (
+                    <span className="text-red-600 text-[12px]">{fullnameError}</span>
                   ) : (
                     ""
                   )}
-                  {item.name == "password" && password == "" ? (
-                    <span className="text-red-600">{passwordError}</span>
+                  {item.name === "password" && password === "" ? (
+                    <span className="text-red-600 text-[12px]">{passwordError}</span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "email" && emailError !== "" ? (
+                    <span className="text-red-600 text-[12px]">{emailError}</span>
+                  ) : (
+                    ""
+                  )}
+                  {item.name === "password" && passwordError !== "" ? (
+                    <span className="text-red-600 text-[12px]">{passwordError}</span>
                   ) : (
                     ""
                   )}
