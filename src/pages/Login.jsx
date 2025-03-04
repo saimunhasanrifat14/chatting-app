@@ -22,6 +22,7 @@ const Login = () => {
   const [logininfoerror, setlogininfoerror] = useState({
     emailError: "",
     passwordError: "",
+    error: "",
   });
 
   const [loading, setloading] = useState(false);
@@ -38,6 +39,12 @@ const Login = () => {
     setlogininfo({
       ...logininfo,
       [name]: value,
+    });
+    setlogininfoerror({
+      ...logininfoerror,
+      emailError: "",
+      passwordError: "",
+      error: "",
     });
   };
 
@@ -70,26 +77,21 @@ const Login = () => {
         })
         .catch((err) => {
           console.log(err.code);
-          if (err.code === "auth/wrong-password") {
+          if (err.code === "auth/network-request-failed") {
             setlogininfoerror({
               ...logininfoerror,
-              passwordError : "Incorrect password."
-            })
-          } else if (err.code === "auth/user-not-found") {
-            setlogininfoerror({
-              ...logininfoerror,
-              emailError : "No account found with this email."
-            })
+              error: "Network error! try again.",
+            });
           } else if (err.code === "auth/invalid-email") {
             setlogininfoerror({
               ...logininfoerror,
-              emailError : "Invalid email format."
-            })
+              emailError: "Invalid email format.",
+            });
           } else {
             setlogininfoerror({
               ...logininfoerror,
-              emailError : "Something went wrong. Please try again."
-            })
+              error: "Something went wrong. Please try again.",
+            });
           }
         })
         .finally(() => {
@@ -106,25 +108,35 @@ const Login = () => {
     seteye(!eye);
   };
 
-  const loginwithGoogle = ()=>{    
+  const loginwithGoogle = () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then((userinfo)=>{
-      console.log(userinfo);
-    }).catch((err)=>{
-      console.log(err.code);
-    })
-  }
+    signInWithPopup(auth, provider)
+      .then((userinfo) => {
+        console.log(userinfo);
+      })
+      .catch((err) => {
+        console.log(err.code);
+      });
+  };
   return (
     <div className="flex">
       <div className="w-[65%]">
         <div className="flex items-center justify-center h-full">
           <div>
-            <h1 className="text-[34px] font-bold text-authHeading mb-[25px]">
+            <h1 className="text-[34px] font-bold text-authHeading">
               Login to your account!
             </h1>
+            {logininfoerror.error !== "" ? (
+              <div className="w-full flex justify-center py-2">
+                <span className="text-red-600">{logininfoerror.error}</span>
+              </div>
+            ) : (
+              ""
+            )}
             <a
-              className="flex items-center justify-center gap-2 text-[14px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]"
-              href="#"  onClick={loginwithGoogle}
+              className="flex items-center justify-center gap-2 text-[14px] mt-[25px] py-[15px] px-[30px] border-gray-300 border-[2px] border-solid rounded-xl font-semibold mb-[30px]"
+              href="#"
+              onClick={loginwithGoogle}
             >
               <span className="text-[20px]">
                 <FcGoogle />
@@ -159,30 +171,17 @@ const Login = () => {
                     }
                     onChange={handleInput}
                   />
-                  {item.name === "email" && logininfo.email === "" ? (
+                  {item.name === "email" && logininfoerror.emailError !== "" ? (
                     <span className="text-red-600">
                       {logininfoerror.emailError}
                     </span>
                   ) : (
                     ""
                   )}
-                  {item.name === "password" && logininfo.password === "" ? (
+                  {item.name === "password" &&
+                  logininfoerror.passwordError !== "" ? (
                     <span className="text-red-600">
                       {logininfoerror.passwordError}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                  {item.name === "email" && logininfoerror.emailError !== "" ? (
-                    <span className="text-red-600">
-                      {logininfoerror.Error}
-                    </span>
-                  ) : (
-                    ""
-                  )}
-                  {item.name === "password" && logininfoerror.passwordError !== "" ? (
-                    <span className="text-red-600">
-                      {logininfoerror.Error}
                     </span>
                   ) : (
                     ""

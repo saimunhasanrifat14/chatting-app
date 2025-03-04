@@ -40,12 +40,12 @@ const Ragistration = () => {
     const { name, value } = event.target;
     if (name === "email") {
       setEmail(value);
-      setEmailError("")
+      setEmailError("");
     } else if (name == "fullname") {
       setFullName(value);
     } else {
       setPassword(value);
-      setPasswordError("")
+      setPasswordError("");
     }
   };
 
@@ -176,28 +176,24 @@ const Ragistration = () => {
                   ) : (
                     ""
                   )}
-                  {item.name === "email" && email === "" ? (
-                    <span className="text-red-600 text-[12px]">{emailError}</span>
-                  ) : (
-                    ""
-                  )}
                   {item.name === "fullname" && fullname === "" ? (
-                    <span className="text-red-600 text-[12px]">{fullnameError}</span>
-                  ) : (
-                    ""
-                  )}
-                  {item.name === "password" && password === "" ? (
-                    <span className="text-red-600 text-[12px]">{passwordError}</span>
+                    <span className="text-red-600 text-[12px]">
+                      {fullnameError}
+                    </span>
                   ) : (
                     ""
                   )}
                   {item.name === "email" && emailError !== "" ? (
-                    <span className="text-red-600 text-[12px]">{emailError}</span>
+                    <span className="text-red-600 text-[12px]">
+                      {emailError}
+                    </span>
                   ) : (
                     ""
                   )}
                   {item.name === "password" && passwordError !== "" ? (
-                    <span className="text-red-600 text-[12px]">{passwordError}</span>
+                    <span className="text-red-600 text-[12px]">
+                      {passwordError}
+                    </span>
                   ) : (
                     ""
                   )}
