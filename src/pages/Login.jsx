@@ -3,7 +3,7 @@ import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
 import LoginBtn from "./CommonComponent/LoginBtn";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   getAuth,
@@ -14,6 +14,7 @@ import {
 
 const Login = () => {
   const auth = getAuth();
+  const navigate = useNavigate();
 
   const [logininfo, setlogininfo] = useState({
     email: "",
@@ -74,6 +75,7 @@ const Login = () => {
           logininfo.password = "";
           logininfoerror.emailError = "";
           logininfoerror.passwordError = "";
+          navigate('/dashboard');
         })
         .catch((err) => {
           console.log(err.code);
@@ -113,6 +115,7 @@ const Login = () => {
     signInWithPopup(auth, provider)
       .then((userinfo) => {
         console.log(userinfo);
+        navigate('/dashboard');
       })
       .catch((err) => {
         console.log(err.code);

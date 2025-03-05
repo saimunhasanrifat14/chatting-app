@@ -4,7 +4,7 @@ import { registrationInputData } from "../Library/Registration";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import RegistrationBtn from "./CommonComponent/RegistrationBtn";
 import Login from "./Login";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import { toast, Bounce } from "react-toastify";
 import {
   getAuth,
@@ -21,6 +21,7 @@ const Ragistration = () => {
   const [loading, setloading] = useState(false);
   const [eye, seteye] = useState(false);
   const item = registrationInputData();
+  const navigate = useNavigate();
 
   // error state
   const [emailError, setEmailError] = useState("");
@@ -94,6 +95,7 @@ const Ragistration = () => {
           setEmailError("");
           setFullNameError("");
           setPasswordError("");
+          navigate('/dashboard');
         })
         .catch((err) => {
           console.log("error is", err.code);
