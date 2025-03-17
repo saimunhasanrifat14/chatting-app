@@ -1,7 +1,7 @@
 import React from 'react'
 import { HiOutlineDotsVertical } from 'react-icons/hi'
 
-const FriendRequast = () => {
+const Group = () => {
     const groups = [
         {
           name: "Raghav",
@@ -48,9 +48,9 @@ const FriendRequast = () => {
     ]
   return (
     <>
-        <div className="p-5 h-[100%]">
+              <div className="p-5 h-[100%]">
                 <div className="h-[15%] flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">Friend Requst</h2>
+                  <h2 className="text-lg font-semibold">Group</h2>
                   <span className="text-blueColor text-[20px] cursor-pointer">
                     <HiOutlineDotsVertical />
                   </span>
@@ -70,15 +70,15 @@ const FriendRequast = () => {
                         <h3 className="font-semibold text-gray-900">{group.name}</h3>
                         <p className="text-gray-500 text-sm">{group.message}</p>
                       </div>
-                      <button className="bg-blueColor mr-3 text-white px-4 py-1 rounded-lg font-semibold cursor-pointer">
-                         Accept
-                      </button>
+                      <span className="mr-3 text-[12px] text-gray-400">
+                      Today, 8:56pm
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
-    </>
+            </>
   )
 }
 
-export default FriendRequast
+export default Group

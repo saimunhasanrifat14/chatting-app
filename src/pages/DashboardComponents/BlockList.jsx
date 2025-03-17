@@ -27,17 +27,35 @@ const BlockList = () => {
           image:
             "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
         },
+        {
+          name: "Swathi",
+          message: "Sure!.",
+          image:
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        },
+        {
+          name: "Kiran",
+          message: "Hi.....",
+          image:
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        },
+        {
+          name: "Raghav Rathe",
+          message: "Hello.....",
+          image:
+            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        },
     ]
   return (
     <>
-      <div className="p-5">
-        <div className="flex justify-between items-center mb-3">
+      <div className="p-5 h-[100%]">
+        <div className="h-[15%] flex justify-between items-center">
           <h2 className="text-lg font-semibold">Blocked Users</h2>
           <span className="text-blueColor text-[20px] cursor-pointer">
             <HiOutlineDotsVertical />
           </span>
         </div>
-        <div className="">
+        <div className="h-[85%] overflow-auto [&::-webkit-scrollbar]:hidden">
           {BlockList?.map((group, index) => (
             <div
               key={index}
