@@ -12,9 +12,12 @@ import {
   updateProfile,
   sendEmailVerification,
 } from "firebase/auth";
+import { getDatabase, push, ref, set } from "firebase/database";
+
 
 const Ragistration = () => {
   const auth = getAuth();
+  const db = getDatabase();
   const [email, setEmail] = useState("");
   const [fullname, setFullName] = useState("");
   const [password, setPassword] = useState("");
@@ -88,6 +91,12 @@ const Ragistration = () => {
           return sendEmailVerification(auth.currentUser);
         })
         .then((mailInfo) => {
+          set(push(ref(db, 'users/' )), {
+            username: auth.currentUser.displayName || fullname,
+            email: auth.currentUser.email || email,
+            profile_picture : "profile picture",
+            userUid : auth.currentUser.uid
+          });
           console.log("mail sended ", mailInfo);
           setEmail("");
           setFullName("");

@@ -3,7 +3,7 @@ import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
 import LoginBtn from "./CommonComponent/LoginBtn";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   getAuth,
@@ -11,8 +11,10 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
+import { getDatabase, push, ref, set } from "firebase/database";
 
 const Login = () => {
+  const db = getDatabase();
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -75,7 +77,7 @@ const Login = () => {
           logininfo.password = "";
           logininfoerror.emailError = "";
           logininfoerror.passwordError = "";
-          navigate('/dashboard');
+          navigate("/dashboard");
         })
         .catch((err) => {
           console.log(err.code);
@@ -115,7 +117,14 @@ const Login = () => {
     signInWithPopup(auth, provider)
       .then((userinfo) => {
         console.log(userinfo);
-        navigate('/dashboard');
+        const { user } = userinfo;
+        set(push(ref(db, "users/")), {
+          username: user.displayName || "Name Missing",
+          email: user.email || "email missing",
+          profile_picture: user.photoURL,
+          userUid: user.uid,
+        });
+        navigate("/dashboard");
       })
       .catch((err) => {
         console.log(err.code);
