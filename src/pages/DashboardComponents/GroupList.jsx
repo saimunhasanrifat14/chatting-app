@@ -50,18 +50,18 @@ const GroupList = () => {
   return (
     <div className="h-[100%] flex flex-col justify-between">
       <div className="bg-white rounded-2xl h-[13%] shadow-lg flex items-center justify-center px-[15px]">
-        <div class="relative w-full flex items-center">
-          <span class="flex absolute text-[20px] left-0 items-center pl-3 pointer-events-none">
+        <div className="relative w-full flex items-center">
+          <span className="flex absolute text-[20px] left-0 items-center pl-3 pointer-events-none">
             <IoSearch />
           </span>
           <input
             type="text"
             id="voice-search"
-            class=" text-gray-900 text-sm block w-full pl-[50px] p-2.5 focus-visible:outline-none"
+            className=" text-gray-900 text-sm block w-full pl-[50px] p-2.5 focus-visible:outline-none"
             placeholder="Search"
             required=""
           />
-          <span class="text-blueColor flex absolute text-[18px] right-0 items-center pr-3 cursor-pointer">
+          <span className="text-blueColor flex absolute text-[18px] right-0 items-center pr-3 cursor-pointer">
             <HiOutlineDotsVertical />
           </span>
         </div>

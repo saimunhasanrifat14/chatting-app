@@ -6,13 +6,13 @@ import { AiOutlineHome } from "react-icons/ai";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
-import { getDatabase, ref, onValue, Database } from "firebase/database";
+import { getDatabase, ref, onValue, Database, update } from "firebase/database";
 
 const Sideber = () => {
   const auth = getAuth();
   const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
-  const [userdata, setuserdata] = useState([]);
+  const [userdata, setuserdata] = useState({});
   const db = getDatabase();
   const location = useLocation();
   const navigationIcon = [
@@ -57,9 +57,10 @@ const Sideber = () => {
           throw new Error("Failed to upload profile picture");
         } else if (result.event === "success") {
           setProfilePic(result.info.secure_url);
-          // const imageUrl = result.info.secure_url;
-          //   setProfilePic(imageUrl);
-          //   localStorage.setItem("profilePic", imageUrl);
+          const updates = {
+            profile_picture: result?.info?.secure_url,
+          };
+          update(ref(db , `users/${userdata.userkey}`), updates);
         }
       }
     );
@@ -91,23 +92,26 @@ const Sideber = () => {
         console.log("error from logout", err);
       });
   };
-
+  /**
+   * todo : datafatch implement
+   * @param ()
+   */
   useEffect(() => {
     const fatchdata = () => {
-      const userRef = ref(db, "users/");
-      onValue(userRef, (snapshot) => {
-        let userblackarray = null;
+      const UserRef = ref(db, "users/");
+      onValue(UserRef, (snapshot) => {
+        let userblackinfo = null;
         snapshot.forEach((item) => {
           if (item.val().userUid === auth.currentUser.uid) {
-            userblackarray = { ...item.val(), userkey: item.key };
+            userblackinfo = { ...item.val(), userkey: item.key };
           }
         });
-        setuserdata(userblackarray);
+        setuserdata(userblackinfo);
       });
     };
     fatchdata();
   }, []);
-  console.log(userdata.profile_picture);
+  console.log("userdata", userdata);
 
   return (
     <div className="sidebar py-6 flex flex-col items-center justify-between bg-blueColor w-[12%] h-full rounded-2xl shadow-lg border-gray-200 border-[1px] border-solid">
@@ -116,9 +120,8 @@ const Sideber = () => {
           <img
             className="relative group w-[100px] h-[100px] rounded-full overflow-hidden"
             src={
-              userdata
-                ? userdata.profile_picture
-                : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+              userdata.profile_picture ||
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
             }
             alt=""
           />
@@ -130,7 +133,12 @@ const Sideber = () => {
             <FiUpload />
           </span>
         </div>
-        <div className="menu w-full flex flex-col items-center justify-center gap-[20px] mt-[60px] ">
+        <div className="py-2">
+          <h2 className="text-[18px] text-white font-semibold">
+            {userdata.username || "UserName"}
+          </h2>
+        </div>
+        <div className="menu w-full flex flex-col items-center justify-center gap-[20px] mt-[40px] ">
           {navigationIcon?.map((item, index) => (
             <Link
               to={item.path}
