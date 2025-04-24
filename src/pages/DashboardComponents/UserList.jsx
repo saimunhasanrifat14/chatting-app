@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { getDatabase, ref, onValue, off, push, set } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import Userskeleton from "../Sleleton/Userskeleton";
+import moment from "moment";
+import { MdFileDownloadDone } from "react-icons/md";
 
 const UserList = () => {
   const auth = getAuth();
   const db = getDatabase();
   const [userlist, setuserlist] = useState([]);
+  const [userFriendRequestList, setuserFriendRequestList] = useState([]);
   const [loading, setloading] = useState(false);
   const [LogedUser, setLogedUser] = useState({});
 
@@ -56,6 +59,37 @@ const UserList = () => {
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
   ];
+
+  // now fatch the friendRequest data
+  useEffect(() => {
+    const fatchFriendRequestData = () => {
+      const UserRef = ref(db, "friendRequest/");
+      onValue(UserRef, (snapshot) => {
+        let FriendRequestList = [];
+        snapshot.forEach((item) => {
+          if (
+            auth.currentUser.uid ||
+            LogedUser.userUid == item.val().senderId
+          ) {
+            FriendRequestList.push(
+              auth.currentUser.uid.concat(item.val().reciverId)
+            );
+          } else {
+            console.log("unmatch");
+          }
+        });
+        setuserFriendRequestList(FriendRequestList);
+      });
+    };
+    fatchFriendRequestData();
+
+    // clean up function
+    return () => {
+      const UserRef = ref(db, "friendRequest/");
+      off(UserRef);
+    };
+  }, []);
+
   /**
    * todo : handleLogout function implement
    * @param ()
@@ -112,8 +146,21 @@ const UserList = () => {
       reciverProfilePic: item.profile_picture,
       reciverId: item.userUid,
       reciverUserKey: item.userkey,
-    });
+      createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
+    })
+      .then(() => {
+        set(push(ref(db, "notification/")), {
+          notificationMsg: `${LogedUser.username} send a Friend request`,
+          senderProfilePic: LogedUser.profile_picture,
+          createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
+        });
+      })
+      .then(() => {
+        console.log("successfully send friend request");
+      })
+      .then(() => {});
   };
+
   return (
     <>
       <div className="p-5 h-[100%]">
@@ -138,14 +185,23 @@ const UserList = () => {
                 <h3 className="font-semibold text-gray-900">{item.username}</h3>
                 <p className="text-gray-500 text-sm">Today, 8:56pm</p>
               </div>
-              <button
-                onClick={() => {
-                  handleFriendRequest(item);
-                }}
-                className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
-              >
-                <FaPlus />
-              </button>
+
+              {userFriendRequestList.includes(
+                auth.currentUser.uid.concat(item.userUid)
+              ) ? (
+                <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer">
+                  <MdFileDownloadDone />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    handleFriendRequest(item);
+                  }}
+                  className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
+                >
+                  <FaPlus />
+                </button>
+              )}
             </div>
           ))}
         </div>
