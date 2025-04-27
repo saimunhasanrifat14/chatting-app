@@ -75,7 +75,8 @@ const UserList = () => {
               auth.currentUser.uid.concat(item.val().reciverId)
             );
           } else {
-            console.log("unmatch");
+            console.log("error from auth.currentUser.uid.concat(item.val().reciverId)");
+            
           }
         });
         setuserFriendRequestList(FriendRequestList);
@@ -189,7 +190,7 @@ const UserList = () => {
               {userFriendRequestList.includes(
                 auth.currentUser.uid.concat(item.userUid)
               ) ? (
-                <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer">
+                <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
                   <MdFileDownloadDone />
                 </button>
               ) : (

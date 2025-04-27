@@ -111,7 +111,6 @@ const Sideber = () => {
     };
     fatchdata();
   }, []);
-  console.log("userdata", userdata);
 
   return (
     <div className="sidebar py-6 flex flex-col items-center justify-between bg-blueColor w-[12%] h-full rounded-2xl shadow-lg border-gray-200 border-[1px] border-solid">
