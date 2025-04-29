@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import { getDatabase, ref, onValue, off, push, set } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  off,
+  push,
+  set,
+  remove,
+} from "firebase/database";
 import { getAuth } from "firebase/auth";
 import moment from "moment";
 
@@ -52,9 +60,8 @@ const FriendRequast = () => {
   const auth = getAuth();
   const db = getDatabase();
   const [loading, setloading] = useState(false);
-    const [FriendRequestList, setFriendRequestList] = useState([]);
-  
-  
+  const [FriendRequestList, setFriendRequestList] = useState([]);
+
   useEffect(() => {
     const fatchdata = () => {
       setloading(true);
@@ -62,8 +69,8 @@ const FriendRequast = () => {
       onValue(UserRef, (snapshot) => {
         let FRList = [];
         snapshot.forEach((item) => {
-          if(auth.currentUser.uid === item.val().reciverId){
-            FRList.push({...item.val(), FriendRequastKey : item.key })
+          if (auth.currentUser.uid === item.val().reciverId) {
+            FRList.push({ ...item.val(), FriendRequastKey: item.key });
           }
         });
         setFriendRequestList(FRList);
@@ -79,7 +86,36 @@ const FriendRequast = () => {
     };
   }, []);
   console.log("frList", FriendRequestList);
-  
+
+  const handleAccept = (FRitem) => {
+    console.log(FRitem);
+    set(push(ref(db, "Friends/")), {
+      ...FRitem,
+      createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
+    })
+      .then(() => {
+        set(push(ref(db, "notification/")), {
+          notificationMsg: `${FRitem.reciverUserName} send a Friend request`,
+          senderProfilePic: FRitem.reciverProfilePic,
+          createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
+        });
+      })
+      .then(() => {
+        const dbref = ref(db, `friendRequest/${FRitem.FriendRequastKey}`);
+        remove(dbref);
+      })
+      .then(() => {
+        console.log("successfully friend request accepted");
+      })
+      .catch(() => {
+        console.error("error from sending friend request");
+      });
+  };
+  const handleReject = (FRitem) => {
+    const areYouSure = confirm("Are you sure you want to reject");
+    const dbref = ref(db, `friendRequest/${FRitem.FriendRequastKey}`);
+    remove(dbref);
+  };
 
   return (
     <>
@@ -91,25 +127,57 @@ const FriendRequast = () => {
           </span>
         </div>
         <div className="h-[85%] overflow-auto [&::-webkit-scrollbar]:hidden">
-          {FriendRequestList?.map((group, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
-            >
-              <img
-                src={group.senderProfilePic || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
-                alt={group.senderUserName}
-                className="w-12 h-12 rounded-full object-cover "
-              />
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{group.senderUserName}</h3>
-                <p className="text-gray-500 text-sm">{moment(group.createAt).fromNow()}</p>
-              </div>
-              <button className="bg-blueColor mr-3 text-white px-4 py-1 rounded-lg font-semibold cursor-pointer">
-                Accept
-              </button>
+          {FriendRequestList.length == 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-lg font-semibold">No friend requests</p>
+              <p className="text-sm text-center max-w-xs mt-1">
+                You have no friend requests at the moment. Try inviting others
+                or wait for new requests to appear!
+              </p>
             </div>
-          ))}
+          ) : (
+            FriendRequestList?.map((group, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
+              >
+                <img
+                  src={
+                    group.senderProfilePic ||
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                  }
+                  alt={group.senderUserName}
+                  className="w-12 h-12 rounded-full object-cover "
+                />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">
+                    {group.senderUserName}
+                  </h3>
+                  <p className="text-gray-500 text-sm">
+                    {moment(group.createAt).fromNow()}
+                  </p>
+                </div>
+                <div>
+                  <button
+                    onClick={() => {
+                      handleAccept(group);
+                    }}
+                    className="bg-blueColor mr-3 text-white px-4 py-1 rounded-lg font-semibold cursor-pointer"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleReject(group);
+                    }}
+                    className="bg-red-400 text-white px-4 py-1 rounded-lg font-semibold cursor-pointer"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </>

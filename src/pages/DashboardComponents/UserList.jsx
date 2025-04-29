@@ -68,15 +68,16 @@ const UserList = () => {
         let FriendRequestList = [];
         snapshot.forEach((item) => {
           if (
-            auth.currentUser.uid ||
-            LogedUser.userUid == item.val().senderId
+            auth.currentUser.uid === item.val().senderId ||
+            LogedUser.userUid === item.val().senderId
           ) {
             FriendRequestList.push(
               auth.currentUser.uid.concat(item.val().reciverId)
             );
           } else {
-            console.log("error from auth.currentUser.uid.concat(item.val().reciverId)");
-            
+            console.log(
+              "error from auth.currentUser.uid.concat(item.val().reciverId)"
+            );
           }
         });
         setuserFriendRequestList(FriendRequestList);
@@ -159,7 +160,9 @@ const UserList = () => {
       .then(() => {
         console.log("successfully send friend request");
       })
-      .then(() => {});
+      .catch(() => {
+        console.error("error from sending friend request");
+      });
   };
 
   return (
@@ -172,39 +175,51 @@ const UserList = () => {
           </span>
         </div>
         <div className="h-[85%] overflow-auto [&::-webkit-scrollbar]:hidden">
-          {userlist?.map((item, index) => (
-            <div
-              key={item.userUid}
-              className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
-            >
-              <img
-                src={item.profile_picture}
-                alt={item.username}
-                className="w-12 h-12 rounded-full object-cover "
-              />
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{item.username}</h3>
-                <p className="text-gray-500 text-sm">Today, 8:56pm</p>
-              </div>
-
-              {userFriendRequestList.includes(
-                auth.currentUser.uid.concat(item.userUid)
-              ) ? (
-                <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
-                  <MdFileDownloadDone />
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    handleFriendRequest(item);
-                  }}
-                  className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
-                >
-                  <FaPlus />
-                </button>
-              )}
+          {userlist.length == 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500">
+              <p className="text-lg font-semibold">No users available</p>
+              <p className="text-sm text-center max-w-xs mt-1">
+                No users found. Please check back later or try searching for
+                someone.
+              </p>
             </div>
-          ))}
+          ) : (
+            userlist?.map((item, index) => (
+              <div
+                key={item.userUid}
+                className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
+              >
+                <img
+                  src={item.profile_picture}
+                  alt={item.username}
+                  className="w-12 h-12 rounded-full object-cover "
+                />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">
+                    {item.username}
+                  </h3>
+                  <p className="text-gray-500 text-sm">Today, 8:56pm</p>
+                </div>
+
+                {userFriendRequestList.includes(
+                  auth.currentUser.uid.concat(item.userUid)
+                ) ? (
+                  <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
+                    <MdFileDownloadDone />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleFriendRequest(item);
+                    }}
+                    className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
+                  >
+                    <FaPlus />
+                  </button>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </>
