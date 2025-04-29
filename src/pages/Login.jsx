@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import loginBanner from "../assets/login/LoginBanner.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { LoginInputData } from "../Library/Login";
@@ -11,7 +11,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { getDatabase, push, ref, set } from "firebase/database";
+import { getDatabase, onValue, off, push, ref, set } from "firebase/database";
 
 const Login = () => {
   const db = getDatabase();
@@ -31,6 +31,8 @@ const Login = () => {
   const [loading, setloading] = useState(false);
   const item = LoginInputData();
   const [eye, seteye] = useState(false);
+  const [userlist, setuserlist] = useState([]);
+  let alreadyExists = false;
 
   /**
    * todo : handleInput function implement
@@ -111,19 +113,52 @@ const Login = () => {
   const handleEye = () => {
     seteye(!eye);
   };
+  /**
+   * todo : Fatch users data from database
+   * @param ()
+   */
+  useEffect(() => {
+    const fatchdata = () => {
+      const UserRef = ref(db, "users/");
+      onValue(UserRef, (snapshot) => {
+        let userblacklist = [];
+        snapshot.forEach((item) => {
+          userblacklist.push({ ...item.val(), userkey: item.key });
+        });
+        setuserlist(userblacklist);
+      });
+    };
+    fatchdata();
 
+    // clean up function
+    return () => {
+      const UserRef = ref(db, "users/");
+      off(UserRef);
+    };
+  }, []);
+  console.log("allUser" , userlist);
+
+  /**
+   * todo : handleEye function implement
+   * @param ()
+   */
   const loginwithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
       .then((userinfo) => {
-        console.log(userinfo);
         const { user } = userinfo;
-        set(push(ref(db, "users/")), {
-          username: user.displayName || "Name Missing",
-          email: user.email || "email missing",
-          profile_picture: user.photoURL,
-          userUid: user.uid,
-        });
+        console.log("login user", user);
+        
+        // chack if current login user alradyExist
+        const isMatched = userlist.some(alluser => alluser.email === user.email);        
+        if(!isMatched){
+          set(push(ref(db, "users/")), {
+            username: user.displayName || "Name Missing",
+            email: user.email || "email missing",
+            profile_picture: user.photoURL,
+            userUid: user.uid,
+          });
+        }
         navigate("/dashboard");
       })
       .catch((err) => {
