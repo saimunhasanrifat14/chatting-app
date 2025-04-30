@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus, FaUser } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { getDatabase, ref, onValue, off, push, set } from "firebase/database";
 import { getAuth } from "firebase/auth";
@@ -11,6 +11,7 @@ const UserList = () => {
   const auth = getAuth();
   const db = getDatabase();
   const [userlist, setuserlist] = useState([]);
+  const [AllFriendslist, setAllFriendslist] = useState([]);
   const [userFriendRequestList, setuserFriendRequestList] = useState([]);
   const [loading, setloading] = useState(false);
   const [LogedUser, setLogedUser] = useState({});
@@ -59,6 +60,33 @@ const UserList = () => {
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
   ];
+  /**
+   * todo: fatch data from friends database
+   * @peram
+   * return voit
+   */
+  useEffect(() => {
+    const fatchdata = () => {
+      const UserRef = ref(db, "Friends/");
+      onValue(UserRef, (snapshot) => {
+        let Friendlist = [];
+        snapshot.forEach((item) => {
+          if (auth.currentUser.uid == item.val().senderId) {
+            // Friendlist.push({ ...item.val(), userkey: item.key });
+            Friendlist.push(item.val().senderId.concat(item.val().reciverId));
+          }
+        });
+        setAllFriendslist(Friendlist);
+      });
+    };
+    fatchdata();
+
+    // clean up function
+    return () => {
+      const UserRef = ref(db, "Friends/");
+      off(UserRef);
+    };
+  }, []);
 
   // now fatch the friendRequest data
   useEffect(() => {
@@ -75,9 +103,7 @@ const UserList = () => {
               auth.currentUser.uid.concat(item.val().reciverId)
             );
           } else {
-            console.log(
-              "error from auth.currentUser.uid.concat(item.val().reciverId)"
-            );
+            console.log("error from fatch Friend Request Data");
           }
         });
         setuserFriendRequestList(FriendRequestList);
@@ -184,41 +210,52 @@ const UserList = () => {
               </p>
             </div>
           ) : (
-            userlist?.map((item, index) => (
-              <div
-                key={item.userUid}
-                className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
-              >
-                <img
-                  src={item.profile_picture}
-                  alt={item.username}
-                  className="w-12 h-12 rounded-full object-cover "
-                />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">
-                    {item.username}
-                  </h3>
-                  <p className="text-gray-500 text-sm">Today, 8:56pm</p>
-                </div>
+            userlist
+              // .filter((item) => {
+              //   const combinedId = auth.currentUser.uid + item.userUid;
+              //   return !AllFriendslist.includes(combinedId);
+              // })
+              .map((item, index) => (
+                <div
+                  key={item.userUid}
+                  className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
+                >
+                  <img
+                    src={item.profile_picture}
+                    alt={item.username}
+                    className="w-12 h-12 rounded-full object-cover "
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">
+                      {item.username}
+                    </h3>
+                    <p className="text-gray-500 text-sm">Today, 8:56pm</p>
+                  </div>
 
-                {userFriendRequestList.includes(
-                  auth.currentUser.uid.concat(item.userUid)
-                ) ? (
-                  <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
-                    <MdFileDownloadDone />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      handleFriendRequest(item);
-                    }}
-                    className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
-                  >
-                    <FaPlus />
-                  </button>
-                )}
-              </div>
-            ))
+                  {userFriendRequestList.includes(
+                    auth.currentUser.uid.concat(item.userUid)
+                  ) ? (
+                    <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
+                      <MdFileDownloadDone />
+                    </button>
+                  ) : AllFriendslist.includes(
+                      auth.currentUser.uid.concat(item.userUid)
+                    ) ? (
+                    <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
+                      <FaUser />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        handleFriendRequest(item);
+                      }}
+                      className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
+                    >
+                      <FaPlus />
+                    </button>
+                  )}
+                </div>
+              ))
           )}
         </div>
       </div>

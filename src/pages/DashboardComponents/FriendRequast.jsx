@@ -85,12 +85,13 @@ const FriendRequast = () => {
       off(UserRef);
     };
   }, []);
-  console.log("frList", FriendRequestList);
 
   const handleAccept = (FRitem) => {
-    console.log(FRitem);
+    console.log("FrItem", FRitem);
+    
     set(push(ref(db, "Friends/")), {
       ...FRitem,
+      senderReciverUid: auth.currentUser.uid.concat(FRitem.senderId),
       createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
     })
       .then(() => {
@@ -105,6 +106,7 @@ const FriendRequast = () => {
         remove(dbref);
       })
       .then(() => {
+
         console.log("successfully friend request accepted");
       })
       .catch(() => {

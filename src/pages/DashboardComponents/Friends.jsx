@@ -78,14 +78,27 @@ const Friends = () => {
   const auth = getAuth();
   const db = getDatabase();
   const [FriendSList, setFriendSList] = useState([]);
-
+  const [FriendSListUid, setFriendSListUid] = useState([]);
+  /**
+   * todo: fatch data from friends database
+   * @peram blocked user data
+   * return voit
+   */
   useEffect(() => {
     const fatchdata = () => {
       const UserRef = ref(db, "Friends/");
       onValue(UserRef, (snapshot) => {
         let FRList = [];
         snapshot.forEach((item) => {
-          if (auth.currentUser.uid !== item.val().senderId) {
+          console.log("clicked", item.val().senderId);
+          console.log("clicked2", auth.currentUser.uid);
+
+          if (
+            auth.currentUser.uid !== item.val().senderId &&
+            item.val().senderReciverUid.includes(
+                auth.currentUser.uid.concat(item.val().senderId)
+              )
+          ) {
             FRList.push({ ...item.val(), FriendsKey: item.key });
           }
         });
@@ -100,7 +113,34 @@ const Friends = () => {
       off(UserRef);
     };
   }, []);
-  console.log("friendsList", FriendSList);
+
+  /**
+   * todo: handleblock function implement
+   * @peram blocked user data
+   * return voit
+   */
+  const handleBlock = (blockUser) => {
+    console.log("block user", blockUser);
+    console.log("block user key", blockUser.FriendsKey);
+    const check = confirm("Are you sure");
+    if (!check) {
+      return;
+    }
+    set(push(ref(db, "block/")), {
+      ...blockUser,
+      createAt: moment().format(" MMM DD YYYY, h:mm:ss"),
+    })
+      .then(() => {
+        const friendRef = ref(db, `Friends/${blockUser.FriendsKey}`);
+        remove(friendRef);
+        console.log("successfully blocked");
+      })
+      .catch(() => {
+        console.error("error from block user");
+      });
+  };
+
+  console.log("all Friends data", FriendSList);
 
   return (
     <>
@@ -121,6 +161,7 @@ const Friends = () => {
               </p>
             </div>
           ) : (
+            // FriendSListUid.includes(auth.currentUser.uid.concat(it))
             FriendSList?.map((friend, index) => (
               <div
                 key={index}
@@ -141,7 +182,7 @@ const Friends = () => {
                 </div>
                 <button
                   onClick={() => {
-                    handleAccept(group);
+                    handleBlock(friend);
                   }}
                   className="bg-red-400  text-white px-4 py-1 rounded-lg font-semibold cursor-pointer"
                 >
