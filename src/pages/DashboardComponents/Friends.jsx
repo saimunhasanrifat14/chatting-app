@@ -11,6 +11,7 @@ import {
 } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import moment from "moment";
+import FriendsSkeleton from "../Sleleton/FriendsSkeleton";
 
 const Friends = () => {
   const Friends = [
@@ -79,6 +80,8 @@ const Friends = () => {
   const db = getDatabase();
   const [FriendSList, setFriendSList] = useState([]);
   const [FriendSListUid, setFriendSListUid] = useState([]);
+    const [loading, setloading] = useState(false);
+  
   /**
    * todo: fatch data from friends database
    * @peram blocked user data
@@ -86,6 +89,7 @@ const Friends = () => {
    */
   useEffect(() => {
     const fatchdata = () => {
+      setloading(true);
       const UserRef = ref(db, "Friends/");
       onValue(UserRef, (snapshot) => {
         let FRList = [];
@@ -103,6 +107,7 @@ const Friends = () => {
           }
         });
         setFriendSList(FRList);
+        setloading(false);
       });
     };
     fatchdata();
@@ -113,6 +118,15 @@ const Friends = () => {
       off(UserRef);
     };
   }, []);
+
+  if (loading) {
+    return (
+      <div className="overflow-hidden">
+        <FriendsSkeleton/>
+      </div>
+    );
+  }
+
 
   /**
    * todo: handleblock function implement

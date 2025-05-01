@@ -210,52 +210,47 @@ const UserList = () => {
               </p>
             </div>
           ) : (
-            userlist
-              // .filter((item) => {
-              //   const combinedId = auth.currentUser.uid + item.userUid;
-              //   return !AllFriendslist.includes(combinedId);
-              // })
-              .map((item, index) => (
-                <div
-                  key={item.userUid}
-                  className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
-                >
-                  <img
-                    src={item.profile_picture}
-                    alt={item.username}
-                    className="w-12 h-12 rounded-full object-cover "
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">
-                      {item.username}
-                    </h3>
-                    <p className="text-gray-500 text-sm">Today, 8:56pm</p>
-                  </div>
+            userlist.map((item, index) => (
+              <div
+                key={item.userUid}
+                className="flex items-center gap-4 py-3 border-b border-b-gray-300 last:border-b-0 "
+              >
+                <img
+                  src={item.profile_picture}
+                  alt={item.username}
+                  className="w-12 h-12 rounded-full object-cover "
+                />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">
+                    {item.username}
+                  </h3>
+                  <p className="text-gray-500 text-sm">Today, 8:56pm</p>
+                </div>
 
-                  {userFriendRequestList.includes(
+                {userFriendRequestList.includes(
+                  auth.currentUser.uid.concat(item.userUid)
+                ) ? (
+                  <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
+                    <MdFileDownloadDone />
+                  </button>
+                ) : AllFriendslist.includes(
                     auth.currentUser.uid.concat(item.userUid)
                   ) ? (
-                    <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
-                      <MdFileDownloadDone />
-                    </button>
-                  ) : AllFriendslist.includes(
-                      auth.currentUser.uid.concat(item.userUid)
-                    ) ? (
-                    <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
-                      <FaUser />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        handleFriendRequest(item);
-                      }}
-                      className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
-                    >
-                      <FaPlus />
-                    </button>
-                  )}
-                </div>
-              ))
+                  <button className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold">
+                    <FaUser />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleFriendRequest(item);
+                    }}
+                    className="bg-blueColor mr-3 text-white p-3 rounded-lg font-semibold cursor-pointer"
+                  >
+                    <FaPlus />
+                  </button>
+                )}
+              </div>
+            ))
           )}
         </div>
       </div>

@@ -11,6 +11,7 @@ import {
 } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import moment from "moment";
+import FriendRequestSkeleton from "../Sleleton/friendRequestSkeleton"
 
 const FriendRequast = () => {
   const groups = [
@@ -61,6 +62,7 @@ const FriendRequast = () => {
   const db = getDatabase();
   const [loading, setloading] = useState(false);
   const [FriendRequestList, setFriendRequestList] = useState([]);
+  
 
   useEffect(() => {
     const fatchdata = () => {
@@ -85,6 +87,14 @@ const FriendRequast = () => {
       off(UserRef);
     };
   }, []);
+
+  if (loading) {
+    return (
+      <div className="overflow-hidden">
+        <FriendRequestSkeleton/>
+      </div>
+    );
+  }
 
   const handleAccept = (FRitem) => {
     console.log("FrItem", FRitem);

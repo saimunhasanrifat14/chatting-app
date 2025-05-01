@@ -11,11 +11,13 @@ import {
 } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import moment from "moment";
+import BlockSkeleton from "../Sleleton/BlockSkeleton";
 
 const BlockList = () => {
   const auth = getAuth();
   const db = getDatabase();
   const [blockUserList, setblockUserList] = useState([]);
+  const [loading, setloading] = useState(false);
 
   const BlockList = [
     {
@@ -64,6 +66,7 @@ const BlockList = () => {
 
   useEffect(() => {
     const fatchdata = () => {
+      setloading(true);
       const UserRef = ref(db, "block/");
       onValue(UserRef, (snapshot) => {
         let BlockList = [];
@@ -80,6 +83,7 @@ const BlockList = () => {
           }
         });
         setblockUserList(BlockList);
+        setloading(false);
       });
     };
     fatchdata();
@@ -90,6 +94,14 @@ const BlockList = () => {
       off(UserRef);
     };
   }, []);
+
+  if (loading) {
+    return (
+      <div className="overflow-hidden">
+        <BlockSkeleton/>
+      </div>
+    );
+  }
 
   /**
    * todo: handleBlock function implement
