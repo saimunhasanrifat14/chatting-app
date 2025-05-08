@@ -50,7 +50,7 @@ const GroupList = () => {
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
   ];
-
+  const [loading, setloading] = useState(false);
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [groupinfo, setGroupInfo] = useState({
     Name: "",
@@ -89,10 +89,12 @@ const GroupList = () => {
       [name]: newValue,
     }));
     // remove error message
-    setGroupError((prevState) => ({
-      ...prevState,
-      [`${name}Error`]: "",
-    }));
+    if (value.trim() !== "") {
+      setGroupError((prevState) => ({
+        ...prevState,
+        [`${name}Error`]: "",
+      }));
+    }
   };
 
   const velidationGroupinfo = (groupinfo) => {
@@ -106,10 +108,39 @@ const GroupList = () => {
     return Object.keys(error).length == 0;
   };
 
-  const handleCreateGroupe = (event) => {
+  const handleCreateGroupe = async (event) => {
     event.preventDefault();
     const error = velidationGroupinfo(groupinfo);
-    console.log("error", error);
+    if (!error) return;
+    // next process
+
+    const formData = new FormData();
+    formData.append("file", groupinfo.Profile);
+    formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+    const cloudinaryApi = import.meta.env.VITE_CLOUDINARY_API;
+
+    setloading(true);
+    try {
+      const res = await fetch(cloudinaryApi, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      console.log(data.secure_url);
+    } catch (error) {
+      console.log("error ", error);
+    } finally {
+      setloading(false);
+      setGroupInfo({
+        Name: "",
+        TagName: "",
+        Profile: "",
+      });
+      setGroupError({});
+      closeModal();
+    }
   };
   return (
     <>
@@ -257,7 +288,7 @@ const GroupList = () => {
                 onClick={handleCreateGroupe}
                 className="py-3 bg-blueColor text-white rounded cursor-pointer "
               >
-                Create
+                {loading ? "..." : "Create"}
               </button>
             </div>
           </form>
