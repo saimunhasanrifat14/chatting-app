@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { FaPlus } from "react-icons/fa";
 import { FaCirclePlus } from "react-icons/fa6";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoCloseCircle, IoSearch } from "react-icons/io5";
 import Modal from "react-modal";
+import { closeModal, openModal } from "../../Utilities/Modal.utils";
+import { handleInputChange } from "../../Utilities/GLInputChange.utils";
+import { handleCreateGroupe } from "../../Utilities/CreateGroupeBtn.utils";
 
 const GroupList = () => {
   const groups = [
@@ -16,24 +18,6 @@ const GroupList = () => {
     {
       name: "Friends Forever",
       message: "Good to see you.",
-      image:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    },
-    {
-      name: "Crazy Cousins",
-      message: "What plans today?",
-      image:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    },
-    {
-      name: "Crazy Cousins",
-      message: "What plans today?",
-      image:
-        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    },
-    {
-      name: "Crazy Cousins",
-      message: "What plans today?",
       image:
         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     },
@@ -73,75 +57,6 @@ const GroupList = () => {
     },
   };
 
-  function openModal() {
-    setIsOpen(true);
-  }
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  const handleInputChange = (event) => {
-    const { name, value, files } = event.target;
-    const newValue = name === "Profile" ? files[0] : value;
-    // groupinfo update
-    setGroupInfo((prevState) => ({
-      ...prevState,
-      [name]: newValue,
-    }));
-    // remove error message
-    if (value.trim() !== "") {
-      setGroupError((prevState) => ({
-        ...prevState,
-        [`${name}Error`]: "",
-      }));
-    }
-  };
-
-  const velidationGroupinfo = (groupinfo) => {
-    let error = {};
-    for (let fild in groupinfo) {
-      if (groupinfo[fild] === "") {
-        error[`${fild}Error`] = `${fild} is required`;
-      }
-    }
-    setGroupError(error);
-    return Object.keys(error).length == 0;
-  };
-
-  const handleCreateGroupe = async (event) => {
-    event.preventDefault();
-    const error = velidationGroupinfo(groupinfo);
-    if (!error) return;
-    // next process
-
-    const formData = new FormData();
-    formData.append("file", groupinfo.Profile);
-    formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
-    const cloudinaryApi = import.meta.env.VITE_CLOUDINARY_API;
-
-    setloading(true);
-    try {
-      const res = await fetch(cloudinaryApi, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      console.log(data.secure_url);
-    } catch (error) {
-      console.log("error ", error);
-    } finally {
-      setloading(false);
-      setGroupInfo({
-        Name: "",
-        TagName: "",
-        Profile: "",
-      });
-      setGroupError({});
-      closeModal();
-    }
-  };
   return (
     <>
       <div className="h-[100%] flex flex-col justify-between">
@@ -167,7 +82,7 @@ const GroupList = () => {
             <h2 className="flex items-center gap-3 text-lg font-semibold">
               Groups List{" "}
               <span
-                onClick={openModal}
+                onClick={() => openModal(setIsOpen)}
                 className=" text-[25px] text-gray-700 cursor-pointer"
               >
                 <FaCirclePlus />
@@ -204,13 +119,13 @@ const GroupList = () => {
       <div>
         <Modal
           isOpen={modalIsOpen}
-          onRequestClose={closeModal}
+          onRequestClose={() => closeModal(setIsOpen)}
           style={customStyles}
         >
           <div className="w-full flex items-end justify-end ">
             <button
               className="text-[30px] text-red-400 cursor-pointer"
-              onClick={closeModal}
+              onClick={() => closeModal(setIsOpen)}
             >
               <IoCloseCircle />
             </button>
@@ -222,7 +137,9 @@ const GroupList = () => {
             <div className="flex flex-col gap-3 mb-5">
               <div className="w-full">
                 <input
-                  onChange={handleInputChange}
+                  onChange={(event) =>
+                    handleInputChange(event, setGroupInfo, setGroupError)
+                  }
                   placeholder="Group Name"
                   name="Name"
                   className="bg-gray-200 py-2 px-3 rounded w-full"
@@ -234,7 +151,9 @@ const GroupList = () => {
               </div>
               <div className="w-full">
                 <input
-                  onChange={handleInputChange}
+                  onChange={(event) =>
+                    handleInputChange(event, setGroupInfo, setGroupError)
+                  }
                   placeholder="Group Tag Name"
                   name="TagName"
                   className="bg-gray-200 py-2 px-3 rounded w-full"
@@ -276,7 +195,9 @@ const GroupList = () => {
                     </p>
                   </div>
                   <input
-                    onChange={handleInputChange}
+                    onChange={(event) =>
+                      handleInputChange(event, setGroupInfo, setGroupError)
+                    }
                     name="Profile"
                     id="file-upload"
                     type="file"
@@ -285,7 +206,16 @@ const GroupList = () => {
                 </label>
               </div>
               <button
-                onClick={handleCreateGroupe}
+                onClick={(event) =>
+                  handleCreateGroupe(
+                    event,
+                    groupinfo,
+                    setGroupInfo,
+                    setGroupError,
+                    setloading,
+                    setIsOpen
+                  )
+                }
                 className="py-3 bg-blueColor text-white rounded cursor-pointer "
               >
                 {loading ? "..." : "Create"}
