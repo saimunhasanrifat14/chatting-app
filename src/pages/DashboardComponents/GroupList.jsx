@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FaCirclePlus } from "react-icons/fa6";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { IoCloseCircle, IoSearch } from "react-icons/io5";
 import Modal from "react-modal";
 import { closeModal, openModal } from "../../Utilities/Modal.utils";
 import { handleInputChange } from "../../Utilities/GLInputChange.utils";
-import { handleCreateGroupe } from "../../Utilities/CreateGroupeBtn.utils";
+import { velidationGroupinfo } from "../../Utilities/Veliadation.utils";
+import { UploadCloudinaryfile } from "../../Utilities/Cloudinary.utils";
 
 const GroupList = () => {
   const groups = [
@@ -41,6 +42,7 @@ const GroupList = () => {
     TagName: "",
     Profile: "",
   });
+  const inputRep = useRef(null);
   const [groupError, setGroupError] = useState({});
 
   const customStyles = {
@@ -56,6 +58,34 @@ const GroupList = () => {
       boxShadow: "0 0px 50px rgba(0, 0, 0, 0.15)",
     },
   };
+
+  const handleCreateGroupe = async (event) => {
+    event.preventDefault();
+    const error = velidationGroupinfo(groupinfo, setGroupError);
+    if (!error) return;
+    // next process
+
+    setloading(true);
+    try {
+      const url = await UploadCloudinaryfile(groupinfo);
+      console.log(url);
+    } catch (error) {
+      console.log("error ", error);
+    } finally {
+      setloading(false);
+      setGroupInfo({
+        Name: "",
+        TagName: "",
+        Profile: null,
+      });
+      setGroupError({});
+      if (inputRep.current) {
+        inputRep.current.value = null;
+      }
+      closeModal(setIsOpen);
+    }
+  };
+  console.log(inputRep.current);
 
   return (
     <>
@@ -140,6 +170,7 @@ const GroupList = () => {
                   onChange={(event) =>
                     handleInputChange(event, setGroupInfo, setGroupError)
                   }
+                  value={groupinfo.Name}
                   placeholder="Group Name"
                   name="Name"
                   className="bg-gray-200 py-2 px-3 rounded w-full"
@@ -154,6 +185,7 @@ const GroupList = () => {
                   onChange={(event) =>
                     handleInputChange(event, setGroupInfo, setGroupError)
                   }
+                  value={groupinfo.TagName}
                   placeholder="Group Tag Name"
                   name="TagName"
                   className="bg-gray-200 py-2 px-3 rounded w-full"
@@ -198,6 +230,7 @@ const GroupList = () => {
                     onChange={(event) =>
                       handleInputChange(event, setGroupInfo, setGroupError)
                     }
+                    ref={inputRep}
                     name="Profile"
                     id="file-upload"
                     type="file"
@@ -206,16 +239,7 @@ const GroupList = () => {
                 </label>
               </div>
               <button
-                onClick={(event) =>
-                  handleCreateGroupe(
-                    event,
-                    groupinfo,
-                    setGroupInfo,
-                    setGroupError,
-                    setloading,
-                    setIsOpen
-                  )
-                }
+                onClick={(event) => handleCreateGroupe(event)}
                 className="py-3 bg-blueColor text-white rounded cursor-pointer "
               >
                 {loading ? "..." : "Create"}
