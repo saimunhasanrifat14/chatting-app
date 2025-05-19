@@ -7,6 +7,9 @@ import { closeModal, openModal } from "../../Utilities/Modal.utils";
 import { handleInputChange } from "../../Utilities/GLInputChange.utils";
 import { velidationGroupinfo } from "../../Utilities/Veliadation.utils";
 import { UploadCloudinaryfile } from "../../Utilities/Cloudinary.utils";
+import { uploadFirebaseData } from "../../Utilities/UploadFirebase.utils";
+import { getAuth } from "firebase/auth/cordova";
+import FetchData from "../Hooks/FetchData";
 
 const GroupList = () => {
   const groups = [
@@ -44,6 +47,9 @@ const GroupList = () => {
   });
   const inputRep = useRef(null);
   const [groupError, setGroupError] = useState({});
+  const auth = getAuth();
+  const dataList = FetchData("groupList");
+  console.log("dataform group list", dataList.data);
 
   const customStyles = {
     content: {
@@ -59,6 +65,8 @@ const GroupList = () => {
     },
   };
 
+  FetchData("groupList");
+
   const handleCreateGroupe = async (event) => {
     event.preventDefault();
     const error = velidationGroupinfo(groupinfo, setGroupError);
@@ -69,6 +77,15 @@ const GroupList = () => {
     try {
       const url = await UploadCloudinaryfile(groupinfo);
       console.log(url);
+      await uploadFirebaseData("groupList/", {
+        adminuid: auth.currentUser.uid,
+        adminName: auth.currentUser.displayName,
+        adiminEmail: auth.currentUser.email,
+        adminProfile: auth.currentUser.photoURL,
+        groupName: groupinfo.Name,
+        groupTagName: groupinfo.TagName,
+        groupProfile: url,
+      });
     } catch (error) {
       console.log("error ", error);
     } finally {
